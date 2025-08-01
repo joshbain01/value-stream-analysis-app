@@ -15,12 +15,13 @@ export const useProcessMapStore = create((set, get) => ({
     return unsubscribe;
   },
 
-  createMap: async (name) => {
-    if (name.trim() !== '') {
+  createMap: async (title) => {
+    if (title.trim() !== '') {
       const docRef = await addDoc(collection(db, 'valueStreamMaps'), { 
-        name, 
+        title, 
         createdAt: new Date().toISOString(),
         timeInMotion: 0,
+        laborRate: 25, // Default labor rate
         processAccounting: {
           revenue: 0,
           inventory: 0,
@@ -37,6 +38,14 @@ export const useProcessMapStore = create((set, get) => ({
   },
 
   setSelectedMapId: (id) => set({ selectedMapId: id }),
+
+  updateMapDetails: async (key, value) => {
+    const { selectedMapId } = get();
+    if (selectedMapId) {
+      const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
+      await updateDoc(mapRef, { [key]: value });
+    }
+  },
 
   addStep: async (stepName, time = 0, employeeFunction = '') => {
     const { selectedMapId } = get();
@@ -131,10 +140,9 @@ export const useProcessMapStore = create((set, get) => ({
     if (!selectedMapId) return 0;
     const currentMap = maps.find(map => map.id === selectedMapId);
     if (!currentMap || !currentMap.steps) return 0;
+    const laborRate = currentMap.laborRate || 25; // Use map's labor rate or default
     return currentMap.steps.reduce((totalStepCost, step) => {
       const stepDefectCost = (step.risks || []).reduce((totalRiskCost, risk) => {
-        // Assuming a labor rate of $25/hour for calculation, as per product_specifications.md
-        const laborRate = 25; 
         const riskCost = (risk.timeImpact / 60) * laborRate + (risk.additionalCost || 0);
         return totalRiskCost + riskCost;
       }, 0);
@@ -147,9 +155,9 @@ export const useProcessMapStore = create((set, get) => ({
     if (!selectedMapId) return 0;
     const currentMap = maps.find(map => map.id === selectedMapId);
     if (!currentMap || !currentMap.steps) return 0;
+    const laborRate = currentMap.laborRate || 25; // Use map's labor rate or default
     return currentMap.steps.reduce((total, step) => {
       const defectCosts = (step.risks || []).reduce((totalRiskCost, risk) => {
-        const laborRate = 25; // Assuming a labor rate of $25/hour
         const riskCost = (risk.timeImpact / 60) * laborRate + (risk.additionalCost || 0);
         return totalRiskCost + riskCost;
       }, 0);

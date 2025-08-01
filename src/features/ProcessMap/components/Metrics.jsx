@@ -1,52 +1,55 @@
 import React from 'react';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@services/firebase';
 import { useProcessMapStore } from '../useProcessMapStore';
 import InputField from '../../../components/InputField.jsx';
 
-const Metrics = ({ mapId }) => {
-  const { maps, selectedMapId, getTotalProcessTime, getTotalDefectCost, getTotalCycleCost, getThroughput, getEBITDA } = useProcessMapStore();
+const Metrics = () => {
+  const { maps, selectedMapId, getTotalProcessTime, getTotalDefectCost, getTotalCycleCost, getThroughput, getEBITDA, updateMapDetails } = useProcessMapStore();
   const currentMap = maps.find(map => map.id === selectedMapId);
 
-  const metrics = currentMap ? currentMap.processAccounting : { revenue: 0, inventory: 0, operatingExpenses: 0 };
-  const timeInMotion = currentMap ? currentMap.timeInMotion : 0;
+  if (!currentMap) {
+    return <div className="text-text-muted">Select a map to see its metrics.</div>;
+  }
 
-  const handleChange = async (e) => {
+  const { processAccounting = {}, timeInMotion = 0, laborRate = 25 } = currentMap;
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    if (!selectedMapId) return;
+    const numericValue = Number(value);
 
-    const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
-    if (name === "timeInMotion") {
-      await updateDoc(mapRef, { timeInMotion: Number(value) });
+    if (name === 'timeInMotion' || name === 'laborRate') {
+      updateMapDetails(name, numericValue);
     } else {
-      await updateDoc(mapRef, {
-        processAccounting: {
-          ...metrics,
-          [name]: Number(value)
-        }
-      });
+      const updatedAccounting = {
+        ...processAccounting,
+        [name]: numericValue,
+      };
+      updateMapDetails('processAccounting', updatedAccounting);
     }
   };
 
   return (
     <div className="border border-muted p-4 rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4 text-text">High-Level Metrics</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Revenue</label>
-          <InputField type="number" name="revenue" value={metrics.revenue} onChange={handleChange} className="w-full" />
+          <InputField type="number" name="revenue" value={processAccounting.revenue || 0} onChange={handleChange} className="w-full" />
         </div>
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Inventory</label>
-          <InputField type="number" name="inventory" value={metrics.inventory} onChange={handleChange} className="w-full" />
+          <InputField type="number" name="inventory" value={processAccounting.inventory || 0} onChange={handleChange} className="w-full" />
         </div>
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Operating Expenses</label>
-          <InputField type="number" name="operatingExpenses" value={metrics.operatingExpenses} onChange={handleChange} className="w-full" />
+          <InputField type="number" name="operatingExpenses" value={processAccounting.operatingExpenses || 0} onChange={handleChange} className="w-full" />
         </div>
         <div>
-          <label className="block text-text-muted text-sm font-medium mb-2">Time in Motion (minutes)</label>
+          <label className="block text-text-muted text-sm font-medium mb-2">Time in Motion (min)</label>
           <InputField type="number" name="timeInMotion" value={timeInMotion} onChange={handleChange} className="w-full" />
+        </div>
+        <div>
+          <label className="block text-text-muted text-sm font-medium mb-2">Labor Rate ($/hr)</label>
+          <InputField type="number" name="laborRate" value={laborRate} onChange={handleChange} className="w-full" />
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mt-4 pt-4 border-t border-muted">
