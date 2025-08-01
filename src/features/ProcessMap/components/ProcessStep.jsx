@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
-import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { db } from '../firebase';
-import RiskList from './RiskList';
+import RiskList from './RiskList.jsx';
+import { useProcessMapStore } from '../useProcessMapStore';
 
 const ProcessStep = ({ mapId, step }) => {
+  const { updateStep } = useProcessMapStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editedStep, setEditedStep] = useState(step);
 
-  const handleUpdate = async () => {
-    const mapRef = doc(db, 'valueStreamMaps', mapId);
-    const oldStep = { ...step };
-    delete oldStep.risks; // Don't compare risks when removing
-    await updateDoc(mapRef, {
-      steps: arrayRemove(oldStep)
-    });
-    await updateDoc(mapRef, {
-      steps: arrayUnion(editedStep)
-    });
+  const handleUpdate = () => {
+    updateStep(step, editedStep);
     setIsEditing(false);
   };
 

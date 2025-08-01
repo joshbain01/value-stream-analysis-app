@@ -1,22 +1,12 @@
-# Value Stream Mapping App
+# React + Vite
 
-This is a simple application for creating and managing value stream maps. It allows users to document their processes, track key metrics, and identify areas for improvement.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
--   **Value Stream Map Management**: Create, view, and delete value stream maps.
--   **Process Step Management**: Add, edit, and delete process steps within a map.
--   **Risk Analysis**: Add and remove defect risks to each process step.
--   **High-Level Metrics**: Track revenue, inventory, and operating expenses to calculate throughput and EBITDA.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Technologies Used
+## Expanding the ESLint configuration
 
--   **Frontend**: React, Tailwind CSS, Shadcn UI
--   **Backend/Database**: Firebase Firestore
-
-## Getting Started
-
-1.  Clone the repository.
-2.  Install dependencies: `npm install`
-3.  Create a Firebase project and add your configuration to `src/firebase.js`.
-4.  Start the development server: `npm start`
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

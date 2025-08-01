@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { db } from '../firebase';
-import Risk from './Risk';
+import Risk from './Risk.jsx';
+import { useProcessMapStore } from '../useProcessMapStore';
 
 const RiskList = ({ mapId, step }) => {
+  const { addRisk } = useProcessMapStore();
   const [newRiskDescription, setNewRiskDescription] = useState('');
 
-  const addRisk = async () => {
-    if (newRiskDescription.trim() !== '' && mapId) {
-      const mapRef = doc(db, 'valueStreamMaps', mapId);
-      await updateDoc(mapRef, {
-        steps: arrayUnion({ ...step, risks: arrayUnion({ description: newRiskDescription }) })
-      });
-      setNewRiskDescription('');
-    }
+  const handleAddRisk = () => {
+    addRisk(step, newRiskDescription);
+    setNewRiskDescription('');
   };
 
   return (
@@ -27,7 +22,7 @@ const RiskList = ({ mapId, step }) => {
           className="border p-2 flex-grow"
           placeholder="New risk description"
         />
-        <button onClick={addRisk} className="bg-blue-500 text-white p-2 ml-2">Add Risk</button>
+        <button onClick={handleAddRisk} className="bg-blue-500 text-white p-2 ml-2">Add Risk</button>
       </div>
       <div>
         {step.risks && step.risks.map((risk, index) => (

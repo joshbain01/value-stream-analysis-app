@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '@services/firebase';
 
 const Metrics = ({ mapId }) => {
   const [metrics, setMetrics] = useState({ revenue: 0, inventory: 0, operatingExpenses: 0 });
