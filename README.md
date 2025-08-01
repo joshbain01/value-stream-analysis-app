@@ -1,4 +1,3 @@
-  GNU nano 7.2                        README.md                                 
 # Value Stream Mapping App
 
 This is a web application built with React and Firebase that enables users to create, manage, and analyze value stream maps. The tool helps in identifying process steps, tracking time and costs, and assessing defect risks to improve operational efficiency.
@@ -56,6 +55,7 @@ This is a web application built with React and Firebase that enables users to cr
 #### Running the App
 Start the development server:
 ```bash
+<<<<<<< HEAD
 npm start
 The application will be available at http://localhost:3000.
 EOF
@@ -208,3 +208,6 @@ This is a web application built with React and Firebase that enables users to cr
       }
     }
     ```
+=======
+npm start
+>>>>>>> origin/main
