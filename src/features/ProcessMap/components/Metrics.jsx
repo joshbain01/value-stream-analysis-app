@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '@services/firebase';
+import { useProcessMapStore } from '../useProcessMapStore';
 
 const Metrics = ({ mapId }) => {
   const [metrics, setMetrics] = useState({ revenue: 0, inventory: 0, operatingExpenses: 0 });
@@ -28,8 +29,8 @@ const Metrics = ({ mapId }) => {
     }
   };
 
-  const throughput = metrics.revenue - metrics.inventory - metrics.operatingExpenses;
-  const ebitda = throughput - metrics.operatingExpenses;
+  const { getTotalTimeInMotion } = useProcessMapStore();
+  const totalTimeInMotion = getTotalTimeInMotion();
 
   return (
     <div className="border p-4">
@@ -56,6 +57,10 @@ const Metrics = ({ mapId }) => {
         <div>
           <h3 className="text-xl font-bold">EBITDA</h3>
           <p>{ebitda}</p>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold">Total Time in Motion</h3>
+          <p>{totalTimeInMotion} minutes</p>
         </div>
       </div>
     </div>

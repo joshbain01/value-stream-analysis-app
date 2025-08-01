@@ -30,12 +30,11 @@ export const useProcessMapStore = create((set, get) => ({
 
   setSelectedMapId: (id) => set({ selectedMapId: id }),
 
-  addStep: async (stepName) => {
-    const { selectedMapId, maps } = get();
+  addStep: async (stepName, time = 0, employeeFunction = '') => {
+    const { selectedMapId } = get();
     if (stepName.trim() !== '' && selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
-      const currentMap = maps.find(map => map.id === selectedMapId);
-      const newStep = { name: stepName, risks: [] };
+      const newStep = { name: stepName, time, employeeFunction, risks: [] };
       
       await updateDoc(mapRef, {
         steps: arrayUnion(newStep)
@@ -56,13 +55,24 @@ export const useProcessMapStore = create((set, get) => ({
     }
   },
 
-  addRisk: async (step, riskDescription) => {
+  deleteStep: async (step) => {
+    const { selectedMapId } = get();
+    if (selectedMapId) {
+      const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
+      await updateDoc(mapRef, {
+        steps: arrayRemove(step)
+      });
+    }
+  },
+
+  addRisk: async (step, riskDescription, timeImpact = 0, probability = 0, cost = 0) => {
     const { selectedMapId, maps } = get();
     if (riskDescription.trim() !== '' && selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
       const currentMap = maps.find(map => map.id === selectedMapId);
+      const newRisk = { description: riskDescription, timeImpact, probability, cost };
       const updatedSteps = currentMap.steps.map(s => 
-        s.name === step.name ? { ...s, risks: [...(s.risks || []), { description: riskDescription }] } : s
+        s.name === step.name ? { ...s, risks: [...(s.risks || []), newRisk] } : s
       );
 
       await updateDoc(mapRef, { steps: updatedSteps });
@@ -80,6 +90,14 @@ export const useProcessMapStore = create((set, get) => ({
 
       await updateDoc(mapRef, { steps: updatedSteps });
     }
+  },
+
+  getTotalTimeInMotion: () => {
+    const { selectedMapId, maps } = get();
+    if (!selectedMapId) return 0;
+    const currentMap = maps.find(map => map.id === selectedMapId);
+    if (!currentMap || !currentMap.steps) return 0;
+    return currentMap.steps.reduce((total, step) => total + (step.time || 0), 0);
   },
 
 }));

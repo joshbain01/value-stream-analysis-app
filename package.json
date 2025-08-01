@@ -11,7 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.1.11",
+    "@tailwindcss/postcss": "latest",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/user-event": "^14.6.1",
     "class-variance-authority": "^0.7.1",
@@ -30,15 +30,15 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "latest",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "jsdom": "^26.1.0",
-    "postcss": "^8.5.6",
-    "postcss-import": "^16.1.1",
-    "tailwindcss": "^4.1.11",
+    "postcss": "latest",
+    "postcss-import": "latest",
+    "tailwindcss": "latest",
     "vite": "^7.0.4",
     "vitest": "^3.2.4"
   }
