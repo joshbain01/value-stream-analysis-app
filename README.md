@@ -29,3 +29,13 @@ The application is a single-page application (SPA) built with React and Vite. It
 -   **Data Persistence:** (Assumed, based on `firebase.js`) The application likely uses Firebase for backend services, enabling users to save and retrieve their value stream maps. This ensures data persistence across sessions.
 -   **User Interface:** The UI is built with React components, styled using Tailwind CSS for a modern and responsive design.
 -   **Routing:** (If applicable, not explicitly seen in file structure but common for SPAs) React Router or a similar library would handle navigation between different views of the application.
+
+## How to Run the Application
+
+To run the application in development mode, use the following command:
+
+```bash
+npm run dev
+```
+
+This will typically start a local development server and provide a URL where you can access the application in your browser.
