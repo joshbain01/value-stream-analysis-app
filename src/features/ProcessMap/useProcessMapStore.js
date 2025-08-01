@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { collection, doc, addDoc, deleteDoc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '@services/firebase';
 
 export const useProcessMapStore = create((set, get) => ({
@@ -18,7 +17,16 @@ export const useProcessMapStore = create((set, get) => ({
 
   createMap: async (name) => {
     if (name.trim() !== '') {
-      const docRef = await addDoc(collection(db, 'valueStreamMaps'), { name });
+      const docRef = await addDoc(collection(db, 'valueStreamMaps'), { 
+        name, 
+        createdAt: new Date().toISOString(),
+        timeInMotion: 0,
+        processAccounting: {
+          revenue: 0,
+          inventory: 0,
+          operatingExpenses: 0
+        }
+      });
       set({ selectedMapId: docRef.id });
     }
   },
@@ -34,7 +42,7 @@ export const useProcessMapStore = create((set, get) => ({
     const { selectedMapId } = get();
     if (stepName.trim() !== '' && selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
-      const newStep = { name: stepName, time, employeeFunction, risks: [] };
+      const newStep = { id: Date.now().toString(), name: stepName, time, employeeFunction, cycleCost: 0, inventoryCosts: 0, risks: [] };
       
       await updateDoc(mapRef, {
         steps: arrayUnion(newStep)
@@ -43,24 +51,33 @@ export const useProcessMapStore = create((set, get) => ({
   },
 
   updateStep: async (oldStep, newStep) => {
-    const { selectedMapId } = get();
+    const { selectedMapId, maps } = get();
     if (selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
+      const currentMap = maps.find(map => map.id === selectedMapId);
+      if (!currentMap) return;
+
+      const updatedSteps = currentMap.steps.map(s =>
+        s.id === oldStep.id ? newStep : s
+      );
+
       await updateDoc(mapRef, {
-        steps: arrayRemove(oldStep)
-      });
-      await updateDoc(mapRef, {
-        steps: arrayUnion(newStep)
+        steps: updatedSteps
       });
     }
   },
 
-  deleteStep: async (step) => {
-    const { selectedMapId } = get();
+  deleteStep: async (stepId) => {
+    const { selectedMapId, maps } = get();
     if (selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
+      const currentMap = maps.find(map => map.id === selectedMapId);
+      if (!currentMap) return;
+
+      const updatedSteps = currentMap.steps.filter(s => s.id !== stepId);
+
       await updateDoc(mapRef, {
-        steps: arrayRemove(step)
+        steps: updatedSteps
       });
     }
   },
@@ -70,22 +87,24 @@ export const useProcessMapStore = create((set, get) => ({
     if (riskDescription.trim() !== '' && selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
       const currentMap = maps.find(map => map.id === selectedMapId);
-      const newRisk = { description: riskDescription, timeImpact, probability, cost };
+      const newRisk = { id: Date.now().toString(), description: riskDescription, timeImpact, probability, additionalCost: cost };
       const updatedSteps = currentMap.steps.map(s => 
-        s.name === step.name ? { ...s, risks: [...(s.risks || []), newRisk] } : s
+        s.id === step.id ? { ...s, risks: [...(s.risks || []), newRisk] } : s
       );
 
       await updateDoc(mapRef, { steps: updatedSteps });
     }
   },
 
-  deleteRisk: async (step, riskDescription) => {
+  deleteRisk: async (step, riskId) => {
     const { selectedMapId, maps } = get();
     if (selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
       const currentMap = maps.find(map => map.id === selectedMapId);
+      if (!currentMap) return;
+
       const updatedSteps = currentMap.steps.map(s => 
-        s.name === step.name ? { ...s, risks: s.risks.filter(r => r.description !== riskDescription) } : s
+        s.id === step.id ? { ...s, risks: s.risks.filter(r => r.id !== riskId) } : s
       );
 
       await updateDoc(mapRef, { steps: updatedSteps });
@@ -98,6 +117,59 @@ export const useProcessMapStore = create((set, get) => ({
     const currentMap = maps.find(map => map.id === selectedMapId);
     if (!currentMap || !currentMap.steps) return 0;
     return currentMap.steps.reduce((total, step) => total + (step.time || 0), 0);
+  },
+
+  getTotalProcessTime: () => {
+    const { getTotalTimeInMotion, selectedMapId, maps } = get();
+    const currentMap = maps.find(map => map.id === selectedMapId);
+    const timeInMotion = currentMap ? (currentMap.timeInMotion || 0) : 0;
+    return getTotalTimeInMotion() + timeInMotion;
+  },
+
+  getTotalDefectCost: () => {
+    const { selectedMapId, maps } = get();
+    if (!selectedMapId) return 0;
+    const currentMap = maps.find(map => map.id === selectedMapId);
+    if (!currentMap || !currentMap.steps) return 0;
+    return currentMap.steps.reduce((totalStepCost, step) => {
+      const stepDefectCost = (step.risks || []).reduce((totalRiskCost, risk) => {
+        // Assuming a labor rate of $25/hour for calculation, as per product_specifications.md
+        const laborRate = 25; 
+        const riskCost = (risk.timeImpact / 60) * laborRate + (risk.additionalCost || 0);
+        return totalRiskCost + riskCost;
+      }, 0);
+      return totalStepCost + stepDefectCost;
+    }, 0);
+  },
+
+  getTotalCycleCost: () => {
+    const { selectedMapId, maps } = get();
+    if (!selectedMapId) return 0;
+    const currentMap = maps.find(map => map.id === selectedMapId);
+    if (!currentMap || !currentMap.steps) return 0;
+    return currentMap.steps.reduce((total, step) => {
+      const defectCosts = (step.risks || []).reduce((totalRiskCost, risk) => {
+        const laborRate = 25; // Assuming a labor rate of $25/hour
+        const riskCost = (risk.timeImpact / 60) * laborRate + (risk.additionalCost || 0);
+        return totalRiskCost + riskCost;
+      }, 0);
+      return total + (step.cycleCost || 0) + (step.inventoryCosts || 0) + defectCosts;
+    }, 0);
+  },
+
+  getThroughput: () => {
+    const { selectedMapId, maps } = get();
+    if (!selectedMapId) return 0;
+    const currentMap = maps.find(map => map.id === selectedMapId);
+    if (!currentMap || !currentMap.processAccounting) return 0;
+    return currentMap.processAccounting.revenue - currentMap.processAccounting.inventory;
+  },
+
+  getEBITDA: () => {
+    const { getThroughput, selectedMapId, maps } = get();
+    const currentMap = maps.find(map => map.id === selectedMapId);
+    if (!currentMap || !currentMap.processAccounting) return 0;
+    return getThroughput() - currentMap.processAccounting.operatingExpenses;
   },
 
 }));

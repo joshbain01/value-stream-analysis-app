@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import RiskList from './RiskList.jsx';
 import { useProcessMapStore } from '../useProcessMapStore';
+import Card from '../../../components/Card.jsx';
+import InputField from '../../../components/InputField.jsx';
+import Button from '../../../components/Button.jsx';
 
 const ProcessStep = ({ mapId, step }) => {
   const { updateStep, deleteStep } = useProcessMapStore();
@@ -13,44 +16,70 @@ const ProcessStep = ({ mapId, step }) => {
   };
 
   return (
-    <div className="border p-4 mb-4">
+    <Card className="mb-4">
       {isEditing ? (
         <div>
-          <input
+          <InputField
             type="text"
             value={editedStep.name}
             onChange={(e) => setEditedStep({ ...editedStep, name: e.target.value })}
-            className="border p-2 mb-2 w-full"
+            className="mb-2 w-full"
             placeholder="Step Name"
           />
-          <input
+          <InputField
             type="number"
             value={editedStep.time}
             onChange={(e) => setEditedStep({ ...editedStep, time: Number(e.target.value) })}
-            className="border p-2 mb-2 w-full"
+            className="mb-2 w-full"
             placeholder="Time (minutes)"
           />
-          <input
+          <InputField
             type="text"
             value={editedStep.employeeFunction}
             onChange={(e) => setEditedStep({ ...editedStep, employeeFunction: e.target.value })}
-            className="border p-2 mb-2 w-full"
+            className="mb-2 w-full"
             placeholder="Employee Function"
           />
-          <button onClick={handleUpdate} className="bg-green-500 text-white p-2">Save</button>
-          <button onClick={() => setIsEditing(false)} className="bg-gray-500 text-white p-2 ml-2">Cancel</button>
+          <InputField
+            type="number"
+            value={editedStep.cycleCost}
+            onChange={(e) => setEditedStep({ ...editedStep, cycleCost: Number(e.target.value) })}
+            className="mb-2 w-full"
+            placeholder="Cycle Cost"
+          />
+          <InputField
+            type="number"
+            value={editedStep.inventoryCosts}
+            onChange={(e) => setEditedStep({ ...editedStep, inventoryCosts: Number(e.target.value) })}
+            className="mb-2 w-full"
+            placeholder="Inventory Costs"
+          />
+          <Button onClick={handleUpdate} variant="primary">Save</Button>
+          <Button onClick={() => setIsEditing(false)} variant="secondary" className="ml-2">Cancel</Button>
         </div>
       ) : (
         <div>
           <h3 className="text-xl font-bold">{step.name}</h3>
           <p>Time: {step.time} minutes</p>
           <p>Employee Function: {step.employeeFunction}</p>
-          <button onClick={() => setIsEditing(true)} className="bg-yellow-500 text-white p-1 mt-2">Edit</button>
-          <button onClick={() => deleteStep(step)} className="bg-red-500 text-white p-1 mt-2 ml-2">Delete</button>
+          <p>Cycle Cost: ${step.cycleCost}</p>
+          <p>Inventory Costs: ${step.inventoryCosts}</p>
+          <p>Defect Costs: ${((step.risks || []).reduce((totalRiskCost, risk) => {
+            const laborRate = 25; // Assuming a labor rate of $25/hour
+            const riskCost = (risk.timeImpact / 60) * laborRate + (risk.additionalCost || 0);
+            return totalRiskCost + riskCost;
+          }, 0)).toFixed(2)}</p>
+          <p>Total Cycle Cost: ${((step.cycleCost || 0) + (step.inventoryCosts || 0) + ((step.risks || []).reduce((totalRiskCost, risk) => {
+            const laborRate = 25; // Assuming a labor rate of $25/hour
+            const riskCost = (risk.timeImpact / 60) * laborRate + (risk.additionalCost || 0);
+            return totalRiskCost + riskCost;
+          }, 0))).toFixed(2)}</p>
+          <Button onClick={() => setIsEditing(true)} variant="secondary">Edit</Button>
+          <Button onClick={() => deleteStep(step.id)} variant="danger" className="ml-2">Delete</Button>
           <RiskList mapId={mapId} step={step} />
         </div>
       )}
-    </div>
+    </Card>
   );
 };
 

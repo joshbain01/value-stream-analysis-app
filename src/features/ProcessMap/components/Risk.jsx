@@ -1,22 +1,24 @@
 import React from 'react';
 import { useProcessMapStore } from '../useProcessMapStore';
+import Card from '../../../components/Card.jsx';
+import Button from '../../../components/Button.jsx';
 
-const Risk = ({ mapId, step, risk }) => {
+const Risk = ({ step, risk }) => {
   const { deleteRisk } = useProcessMapStore();
 
   const handleDelete = () => {
-    deleteRisk(step, risk.description);
+    deleteRisk(step, risk.id);
   };
 
   return (
-    <div className="border p-2 mt-2">
-      <p>Description: {risk.description}</p>
-      <p>Time Impact: {risk.timeImpact} minutes</p>
-      <p>Probability: {risk.probability}</p>
-      <p>Cost: ${risk.cost}</p>
-      <p>Calculated Risk Cost: ${risk.probability * risk.cost}</p>
-      <button onClick={handleDelete} className="bg-red-500 text-white p-1 mt-2">Delete</button>
-    </div>
+    <Card className="mt-2">
+      <p className="text-gray-700">Description: {risk.description}</p>
+      <p className="text-gray-700">Time Impact: {risk.timeImpact} minutes</p>
+      <p className="text-gray-700">Probability: {risk.probability}</p>
+      <p className="text-gray-700">Additional Risk Cost: ${risk.additionalCost}</p>
+      <p className="text-gray-700">Calculated Risk Cost: ${((risk.timeImpact / 60) * 25 + (risk.additionalCost || 0)).toFixed(2)}</p>
+      <Button onClick={handleDelete} variant="danger" className="mt-2">Delete</Button>
+    </Card>
   );
 };
 

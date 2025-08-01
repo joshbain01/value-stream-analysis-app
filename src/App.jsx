@@ -1,16 +1,19 @@
-import { useState } from 'react'
+
 import './App.css'
 import ValueStreamMapList from './features/ProcessMap/components/ValueStreamMapList.jsx'
 import Metrics from './features/ProcessMap/components/Metrics.jsx'
+import Card from './components/Card.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+  
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Value Stream Mapping App</h1>
-      <ValueStreamMapList />
-      <Metrics />
+    <div className="bg-background min-h-screen text-text p-8">
+      <h1 className="text-4xl font-extrabold mb-8 text-center text-text">Value Stream Mapping App</h1>
+      <div className="space-y-8">
+        <ValueStreamMapList />
+        <Metrics />
+      </div>
     </div>
   )
 }

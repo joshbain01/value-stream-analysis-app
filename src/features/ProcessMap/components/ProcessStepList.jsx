@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ProcessStep from './ProcessStep.jsx';
 import { useProcessMapStore } from '../useProcessMapStore';
+import Button from '../../../components/Button.jsx';
+import InputField from '../../../components/InputField.jsx'; // Import the new InputField component
 
 const ProcessStepList = ({ mapId }) => {
   const { maps, addStep } = useProcessMapStore();
@@ -22,28 +24,28 @@ const ProcessStepList = ({ mapId }) => {
     <div>
       <h2 className="text-2xl font-bold mb-4">Process Steps</h2>
       <div className="flex flex-col mb-4">
-        <input
+        <InputField
           type="text"
           value={newStepName}
           onChange={(e) => setNewStepName(e.target.value)}
-          className="border p-2 mb-2"
+          className="mb-2 w-full"
           placeholder="New step name"
         />
-        <input
+        <InputField
           type="number"
           value={newStepTime}
           onChange={(e) => setNewStepTime(Number(e.target.value))}
-          className="border p-2 mb-2"
+          className="mb-2 w-full"
           placeholder="Time (minutes)"
         />
-        <input
+        <InputField
           type="text"
           value={newEmployeeFunction}
           onChange={(e) => setNewEmployeeFunction(e.target.value)}
-          className="border p-2 mb-2"
+          className="mb-2 w-full"
           placeholder="Employee Function"
         />
-        <button onClick={handleAddStep} className="bg-blue-500 text-white p-2">Add Step</button>
+        <Button onClick={handleAddStep}>Add Step</Button>
       </div>
       <div>
         {steps.map((step, index) => (

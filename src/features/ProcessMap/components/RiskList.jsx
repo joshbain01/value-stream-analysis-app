@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Risk from './Risk.jsx';
 import { useProcessMapStore } from '../useProcessMapStore';
+import InputField from '../../../components/InputField.jsx';
+import Button from '../../../components/Button.jsx';
 
 const RiskList = ({ mapId, step }) => {
   const { addRisk } = useProcessMapStore();
@@ -18,40 +20,33 @@ const RiskList = ({ mapId, step }) => {
   };
 
   return (
-    <div className="mt-4">
-      <h4 className="text-lg font-bold">Risks</h4>
-      <div className="flex flex-col mt-2">
-        <input
+    <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+      <h4 className="text-lg font-bold mb-3 text-gray-800">Risks</h4>
+      <div className="flex flex-col gap-2 mb-4">
+        <InputField
           type="text"
           value={newRiskDescription}
           onChange={(e) => setNewRiskDescription(e.target.value)}
-          className="border p-2 mb-2"
           placeholder="New risk description"
+          className="w-full"
         />
-        <input
+        <InputField
           type="number"
           value={newTimeImpact}
           onChange={(e) => setNewTimeImpact(Number(e.target.value))}
-          className="border p-2 mb-2"
           placeholder="Time Impact (minutes)"
+          className="w-full"
         />
-        <input
+        <InputField
           type="number"
           value={newProbability}
           onChange={(e) => setNewProbability(Number(e.target.value))}
-          className="border p-2 mb-2"
           placeholder="Probability (0-1)" step="0.01"
+          className="w-full"
         />
-        <input
-          type="number"
-          value={newCost}
-          onChange={(e) => setNewCost(Number(e.target.value))}
-          className="border p-2 mb-2"
-          placeholder="Cost"
-        />
-        <button onClick={handleAddRisk} className="bg-blue-500 text-white p-2">Add Risk</button>
+        <Button onClick={handleAddRisk} variant="primary">Add Risk</Button>
       </div>
-      <div>
+      <div className="space-y-2">
         {step.risks && step.risks.map((risk, index) => (
           <Risk key={index} mapId={mapId} step={step} risk={risk} />
         ))}
