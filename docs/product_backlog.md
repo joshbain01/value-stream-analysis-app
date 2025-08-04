@@ -3,26 +3,26 @@
 This document outlines the remaining tasks and considerations before the Value Stream Mapping App can be deployed.
 
 ## 1. Feature Completeness
-- [ ] **Implement all core features defined for the MVP (e.g., full CRUD for process steps, risks, and metrics).**
+- [x] **Implement all core features defined for the MVP (e.g., full CRUD for process steps, risks, and metrics).**
   - **Description:** Ensure that all planned functionalities for managing value stream maps, including creating, reading, updating, and deleting maps, process steps, risks, and associated metrics, are fully implemented and functional. This includes all necessary UI components and backend logic.
   - **Dependencies:** Clear definition of MVP features.
   - **Constraints:** Time and resource availability.
-  - [ ] **Implement Value Stream Map Dashboard:** Display a list of all existing value stream maps with title, creation date, and options to open or delete.
-  - [ ] **Implement New Value Stream Map Creation:** Allow users to create a new map by providing a title, including a confirmation dialog for deletion.
-  - [ ] **Implement Process Step CRUD:**
-    - [ ] Add, edit, and delete process steps within a value stream map.
-    - [ ] Ensure each process step component has editable fields for: Step Name, Employee Function, Time (minutes), Cycle Cost, Inventory Costs.
-    - [ ] Implement calculation for `Total Cycle Cost` (`Cycle Cost + Defect Costs + Inventory Costs`).
-  - [ ] **Implement Risk Analysis CRUD:**
-    - [ ] Associate defect risks with each process step.
-    - [ ] Implement a dialog for adding new risks with fields: Description, Risk Time, Risk Probability, Additional Risk Cost.
-    - [ ] Implement calculation for `Defect Cost` (`(Risk Time / 60) * Labor Rate + Additional Risk Cost`).
-    - [ ] Implement calculation for `Total Defect Costs` (sum of all associated risk costs for a step).
-    - [ ] Allow users to delete individual risks.
-  - [ ] **Implement Financial and Process Metrics Section:**
-    - [ ] Create a dedicated metrics section at the top of the VSM Editor.
-    - [ ] Implement input fields for: Revenue, Inventory (of finished goods), Operating Expenses, Time in Motion (minutes).
-    - [ ] Implement real-time calculation and display of: `Total Process Time`, `Total Defect Cost`, `Total Cycle Cost`, `Throughput`, `EBITDA`.
+  - [x] **Implement Value Stream Map Dashboard:** Display a list of all existing value stream maps with title, creation date, and options to open or delete.
+  - [x] **Implement New Value Stream Map Creation:** Allow users to create a new map by providing a title, including a confirmation dialog for deletion.
+  - [x] **Implement Process Step CRUD:**
+    - [x] Add, edit, and delete process steps within a value stream map.
+    - [x] Ensure each process step component has editable fields for: Step Name, Employee Function, Time (minutes), Cycle Cost, Inventory Costs.
+    - [x] Implement calculation for `Total Cycle Cost` (`Cycle Cost + Defect Costs + Inventory Costs`).
+  - [x] **Implement Risk Analysis CRUD:**
+    - [x] Associate defect risks with each process step.
+    - [x] Implement a dialog for adding new risks with fields: Description, Risk Time, Risk Probability, Additional Risk Cost.
+    - [x] Implement calculation for `Defect Cost` (`(Risk Time / 60) * Labor Rate + Additional Risk Cost`).
+    - [x] Implement calculation for `Total Defect Costs` (sum of all associated risk costs for a step).
+    - [x] Allow users to delete individual risks.
+  - [x] **Implement Financial and Process Metrics Section:**
+    - [x] Create a dedicated metrics section at the top of the VSM Editor.
+    - [x] Implement input fields for: Revenue, Inventory (of finished goods), Operating Expenses, Time in Motion (minutes).
+    - [x] Implement real-time calculation and display of: `Total Process Time`, `Total Defect Cost`, `Total Cycle Cost`, `Throughput`, `EBITDA`.
 
 - [ ] **Ensure all user interactions are intuitive and complete.**
   - **Description:** Verify that the user interface provides clear feedback for all actions, handles edge cases gracefully (e.g., empty states, invalid inputs), and guides the user through workflows effectively.

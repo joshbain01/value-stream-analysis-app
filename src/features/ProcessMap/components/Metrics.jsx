@@ -1,6 +1,6 @@
 import React from 'react';
 import { useProcessMapStore } from '../useProcessMapStore';
-import InputField from '../../../components/InputField.jsx';
+import { Input } from '../../../components/Input.jsx';
 
 const Metrics = () => {
   const { maps, selectedMapId, getTotalProcessTime, getTotalDefectCost, getTotalCycleCost, getThroughput, getEBITDA, updateMapDetails } = useProcessMapStore();
@@ -33,23 +33,23 @@ const Metrics = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Revenue</label>
-          <InputField type="number" name="revenue" value={processAccounting.revenue || 0} onChange={handleChange} className="w-full" />
+          <Input type="number" name="revenue" value={processAccounting.revenue || 0} onChange={handleChange} className="w-full" />
         </div>
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Inventory</label>
-          <InputField type="number" name="inventory" value={processAccounting.inventory || 0} onChange={handleChange} className="w-full" />
+          <Input type="number" name="inventory" value={processAccounting.inventory || 0} onChange={handleChange} className="w-full" />
         </div>
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Operating Expenses</label>
-          <InputField type="number" name="operatingExpenses" value={processAccounting.operatingExpenses || 0} onChange={handleChange} className="w-full" />
+          <Input type="number" name="operatingExpenses" value={processAccounting.operatingExpenses || 0} onChange={handleChange} className="w-full" />
         </div>
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Time in Motion (min)</label>
-          <InputField type="number" name="timeInMotion" value={timeInMotion} onChange={handleChange} className="w-full" />
+          <Input type="number" name="timeInMotion" value={timeInMotion} onChange={handleChange} className="w-full" />
         </div>
         <div>
           <label className="block text-text-muted text-sm font-medium mb-2">Labor Rate ($/hr)</label>
-          <InputField type="number" name="laborRate" value={laborRate} onChange={handleChange} className="w-full" />
+          <Input type="number" name="laborRate" value={laborRate} onChange={handleChange} className="w-full" />
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mt-4 pt-4 border-t border-muted">

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Risk from './Risk.jsx';
 import { useProcessMapStore } from '../useProcessMapStore';
-import InputField from '../../../components/InputField.jsx';
-import Button from '../../../components/Button.jsx';
+import { Input } from '../../../components/Input.jsx';
+import { Button } from '../../../components/Button.jsx';
 
 const RiskList = ({ mapId, step }) => {
   const { addRisk } = useProcessMapStore();
@@ -20,36 +20,46 @@ const RiskList = ({ mapId, step }) => {
   };
 
   return (
-    <div className="mt-6 p-4 border rounded-lg bg-gray-50">
-      <h4 className="text-lg font-bold mb-3 text-gray-800">Risks</h4>
-      <div className="flex flex-col gap-2 mb-4">
-        <InputField
+    <div className="mt-6 p-4 border rounded-lg bg-surface">
+      <h4 className="text-lg font-bold mb-3">Risks</h4>
+      <div className="space-y-2 mb-4">
+        <Input
           type="text"
           value={newRiskDescription}
           onChange={(e) => setNewRiskDescription(e.target.value)}
           placeholder="New risk description"
-          className="w-full"
         />
-        <InputField
+        <Input
           type="number"
           value={newTimeImpact}
           onChange={(e) => setNewTimeImpact(Number(e.target.value))}
           placeholder="Time Impact (minutes)"
-          className="w-full"
         />
-        <InputField
+        <Input
           type="number"
           value={newProbability}
           onChange={(e) => setNewProbability(Number(e.target.value))}
-          placeholder="Probability (0-1)" step="0.01"
-          className="w-full"
+          placeholder="Probability (%)"
         />
-        <Button onClick={handleAddRisk} variant="primary">Add Risk</Button>
+        <Input
+          type="number"
+          value={newCost}
+          onChange={(e) => setNewCost(Number(e.target.value))}
+          placeholder="Additional Cost"
+        />
+        <Button onClick={handleAddRisk}>Add Risk</Button>
       </div>
       <div className="space-y-2">
-        {step.risks && step.risks.map((risk, index) => (
-          <Risk key={index} mapId={mapId} step={step} risk={risk} />
-        ))}
+        {(!step.risks || step.risks.length === 0) ? (
+          <div className="text-center text-muted-foreground p-4 border-2 border-dashed border-border rounded-lg">
+            <p>No risks defined for this step.</p>
+            <p className="text-sm">Use the form above to add a risk.</p>
+          </div>
+        ) : (
+          step.risks.map((risk, index) => (
+            <Risk key={index} mapId={mapId} step={step} risk={risk} />
+          ))
+        )}
       </div>
     </div>
   );

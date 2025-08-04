@@ -2,7 +2,6 @@
 import './App.css'
 import ValueStreamMapList from './features/ProcessMap/components/ValueStreamMapList.jsx'
 import Metrics from './features/ProcessMap/components/Metrics.jsx'
-import Card from './components/Card.jsx';
 
 function App() {
   

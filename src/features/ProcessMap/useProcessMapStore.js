@@ -17,8 +17,8 @@ export const useProcessMapStore = create((set, get) => ({
 
   createMap: async (title) => {
     if (title.trim() !== '') {
-      const docRef = await addDoc(collection(db, 'valueStreamMaps'), { 
-        title, 
+      const docRef = await addDoc(collection(db, 'valueStreamMaps'), {
+        title,
         createdAt: new Date().toISOString(),
         timeInMotion: 0,
         laborRate: 25, // Default labor rate
@@ -47,11 +47,11 @@ export const useProcessMapStore = create((set, get) => ({
     }
   },
 
-  addStep: async (stepName, time = 0, employeeFunction = '') => {
+  addStep: async (stepName, time = 0, employeeFunction = '', cycleCost = 0, inventoryCosts = 0) => {
     const { selectedMapId } = get();
     if (stepName.trim() !== '' && selectedMapId) {
       const mapRef = doc(db, 'valueStreamMaps', selectedMapId);
-      const newStep = { id: Date.now().toString(), name: stepName, time, employeeFunction, cycleCost: 0, inventoryCosts: 0, risks: [] };
+      const newStep = { id: Date.now().toString(), name: stepName, time, employeeFunction, cycleCost, inventoryCosts, risks: [] };
       
       await updateDoc(mapRef, {
         steps: arrayUnion(newStep)
